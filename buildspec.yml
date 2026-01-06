@@ -1,0 +1,24 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_REPO_NAME: node-docker-poc
+    IMAGE_TAG: latest
+
+phases:
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region me-central-1 | docker login --username AWS --password-stdin 767397902739.dkr.ecr.me-central-1.amazonaws.com
+  build:
+    commands:
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG 767397902739.dkr.ecr.me-central-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+  post_build:
+    commands:
+      - docker push 767397902739.dkr.ecr.me-central-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+
+artifacts:
+  files:
+    - appspec.yml
+    - scripts/**
+

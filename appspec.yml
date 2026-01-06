@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+
+hooks:
+  BeforeInstall:
+    - location: scripts/stop_container.sh
+  ApplicationStart:
+    - location: scripts/pull_image.sh
+    - location: scripts/start_container.sh
+
