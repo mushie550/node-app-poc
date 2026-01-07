@@ -8,6 +8,13 @@ env:
     IMAGE_TAG: latest
 
 phases:
+  install:
+    commands:
+      - echo Installing AWS CLI v2...
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip -q awscliv2.zip
+      - ./aws/install
+
   pre_build:
     commands:
       - aws ecr get-login-password --region me-central-1 | docker login --username AWS --password-stdin 767397902739.dkr.ecr.me-central-1.amazonaws.com
