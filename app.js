@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send('Dockerized Node.js app deployed via AWS CodeDeploy (Approval System Test)🚀');
+  res.send('Dockerized Node.js app deployed via AWS CodeDeploy (Approval System +SNS Test)🚀');
 });
 
 app.listen(3000, () => {
