@@ -2,6 +2,8 @@ version: 0.2
 
 env:
   variables:
+    CLUSTER_NAME: node-app-ecs-cluster-musharraf
+    SERVICE_NAME: node-app-musharraf-ecs-service
     IMAGE_REPO_NAME: node-docker-poc
     IMAGE_TAG: latest
 
@@ -13,12 +15,12 @@ phases:
     commands:
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG 767397902739.dkr.ecr.me-central-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
-  post_build:
-    commands:
       - docker push 767397902739.dkr.ecr.me-central-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
 
-artifacts:
-  files:
-    - appspec.yml
-    - scripts/**
-
+  post_build:
+    commands:
+      - aws ecs update-service \
+          --cluster $CLUSTER_NAME \
+          --service $SERVICE_NAME \
+          --force-new-deployment
+      
