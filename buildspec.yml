@@ -7,6 +7,7 @@ env:
     IMAGE_REPO_NAME: node-docker-poc
     CLUSTER_NAME: node-app-ecs-cluster-musharraf
     SERVICE_NAME: node-app-musharraf-ecs-service
+    TASK_FAMILY: node-app-musharraf
 
 phases:
   pre_build:
@@ -31,5 +32,14 @@ phases:
       - echo Pushing Docker image...
       - docker push $IMAGE_URI
 
+      - echo Fetching current task definition
+      - aws ecs describe-task-definition --task-definition $TASK_FAMILY --query taskDefinition > taskdef.json
+
+      - echo Updating image in task definition
+      - sed -i "s|IMAGE_TAG|$COMMIT_HASH|g" taskdef.json
+
+      - echo Registering new task definition revision
+      - aws ecs register-task-definition --cli-input-json file://taskdef.json
+
       - echo Updating ECS service with new image...
-      - aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment
+      - aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $TASK_FAMILY
